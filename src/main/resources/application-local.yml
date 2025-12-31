@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    username: root
+    password: 1234
+
+jwt:
+  secret: my-super-secret-key-my-super-secret-key
+  expiration: 900000
