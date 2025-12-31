@@ -25,18 +25,12 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-        // ⚠️ 實務上請放到 application.yml
-        /*private static final String SECRET_KEY =
-                "my-super-secret-key-my-super-secret-key";*/
-
         @Value("${jwt.secret}")
         private String secretKey;
 
         @Value("${jwt.expiration}")
         private long expiration;
 
-        /*private final Key key =
-                Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));*/
         private Key key;
 
         @PostConstruct // @PostConstruct 一定在 @Value 注入後執行
