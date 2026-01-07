@@ -9,8 +9,9 @@ import org.springframework.data.repository.query.Param;
 import com.example.demo.practice.dto.response.ProductResponse;
 import com.example.demo.practice.entity.Product;
 
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // 分頁
+
     @Query("""
         SELECT new com.example.demo.practice.dto.response.ProductResponse(
             p.id,
@@ -25,7 +26,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     """)
     Page<ProductResponse> findProducts(Pageable pageable);
 
-    // 搜尋 + 分頁
     @Query("""
         SELECT new com.example.demo.practice.dto.response.ProductResponse(
             p.id,

@@ -4,10 +4,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.practice.dto.request.UserUpdateRequest;
+import com.example.demo.practice.dto.response.ErrorResponse;
 import com.example.demo.practice.dto.response.UserResponse;
 import com.example.demo.practice.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,8 +38,13 @@ public class UserController {
         summary = "取得當前使用者資料"
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "成功"),
-        @ApiResponse(responseCode = "404", description = "找不到使用者")
+            @ApiResponse(responseCode = "200", description = "成功取得使用者資料"),
+            @ApiResponse(
+                responseCode = "401",
+                description = "未登入",
+                    content = @Content(
+                        schema = @Schema(implementation = ErrorResponse.class)
+            ))
     })
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(
@@ -50,8 +58,13 @@ public class UserController {
         description = "修改name、phone跟address"
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "成功"),
-        @ApiResponse(responseCode = "404", description = "找不到使用者")
+            @ApiResponse(responseCode = "200", description = "成功更新使用者資料"),
+            @ApiResponse(
+                responseCode = "401",
+                description = "未登入",
+                    content = @Content(
+                        schema = @Schema(implementation = ErrorResponse.class)
+            ))
     })
     @PutMapping("/me")
     public ResponseEntity<UserResponse> putMe(

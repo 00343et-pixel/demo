@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record UserUpdateRequest(
 
     @Schema(description = "user name", example = "Eric")
-    String name,
+    String userName,
 
     @Schema(description = "phone number", example = "0972666666")
     String phone,

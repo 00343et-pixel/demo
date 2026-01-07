@@ -1,6 +1,9 @@
 package com.example.demo.practice.dto.request;
 
+import java.math.BigDecimal;
+
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,9 +24,9 @@ public record ProductCreateRequest(
     String description,
 
     @NotNull
-    @Min(0)
-    @Schema(description = "price of product", example = "32000")
-    Integer price,
+    @DecimalMin("0.00")
+    @Schema(description = "price of product", example = "32000.00")
+    BigDecimal price,
 
     @NotNull
     @Min(0)

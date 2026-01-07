@@ -5,14 +5,14 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
+
 @Service
+@RequiredArgsConstructor
 public class TokenBlacklistService {
 
     private final StringRedisTemplate redisTemplate;
-
-    public TokenBlacklistService(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
 
     public void blacklist(String token, long ttlMillis) {
         String key = "blacklist:" + token;

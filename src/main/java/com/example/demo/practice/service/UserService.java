@@ -26,7 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Cacheable(value = "users", key = "'email:' + #email")
-    @Transactional(readOnly = true) // 只做查詢，不應該修改資料
+    @Transactional(readOnly = true)
     public UserResponse getProfileByEmail(String email) {
 
         return UserResponse.from(getUser(email));
@@ -37,7 +37,7 @@ public class UserService {
     public UserResponse createUser(UserCreateRequest request) {
 
         User user = new User(
-            request.username(),
+            request.userName(),
             request.email(),
             request.phone(),
             request.address(),
@@ -50,22 +50,28 @@ public class UserService {
 
     @Transactional
     public void resetPassword(String email, String rawPassword) {
+
         User user = getUser(email);
-        if (passwordEncoder.matches(rawPassword, user.getPassword())) { //encode邏輯放service
+
+        if (passwordEncoder.matches(rawPassword, user.getPassword())) {
             throw new SamePasswordException();
         }
+        
         user.changePassword(passwordEncoder.encode(rawPassword));
     }
 
     @Transactional
     @CacheEvict(value = "users", key = "'email:' + #email")
     public UserResponse updateData(String email, UserUpdateRequest updateRequest) {
+
         User user = getUser(email);
+
         user.updateData(
-            updateRequest.name(),
+            updateRequest.userName(),
             updateRequest.phone(),
             updateRequest.address()
         );
+
         return UserResponse.from(user);
     }
 

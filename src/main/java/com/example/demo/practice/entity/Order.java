@@ -1,5 +1,6 @@
 package com.example.demo.practice.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,12 +31,17 @@ public class Order extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private Integer totalPrice;
+    @DecimalMin(value = "0.00", inclusive = true)
+    @Column(
+        precision = 10,
+        scale = 2,
+        nullable = false
+    )
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -46,23 +53,19 @@ public class Order extends AuditableEntity {
     public void addItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);
-    }
-
-    public void removeItem(OrderItem item) {
-        items.remove(item);
-        item.setOrder(null);
+        this.totalPrice = this.totalPrice.add(item.getPrice());
     }
 
     public void setUser(User user) {
         this.user = user;
-    }   
-
-    public void setTotalPrice(Integer totalPrice) {
-        this.totalPrice = totalPrice;
     }
 
     public void setStatus(OrderStatus status) {
+
+        if (this.status == OrderStatus.CANCELED){
+            throw new RuntimeException("order is already canceled");
+        }
+
         this.status = status;
     }
-
 }

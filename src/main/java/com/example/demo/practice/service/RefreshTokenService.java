@@ -12,21 +12,20 @@ import com.example.demo.practice.exception.TokenException;
 import com.example.demo.practice.repository.RefreshTokenRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenService {
 
     private static final long REFRESH_TOKEN_DAYS = 7;
 
     private final RefreshTokenRepository repo;
 
-    public RefreshTokenService(RefreshTokenRepository repo) {
-        this.repo = repo;
-    }
-
-    @Transactional // save / delete / remove 一定要在 Transaction 裡 (重要!!!)
+    @Transactional
     public RefreshToken create(User user) {
-        // 同一個使用者只留一顆
+        
         repo.deleteByUser(user);
 
         RefreshToken token = new RefreshToken();
@@ -51,9 +50,9 @@ public class RefreshTokenService {
         return refreshToken.getUser();
     }
 
-    @Transactional // save / delete / remove 一定要在 Transaction 裡 (重要!!!)
+    @Transactional
     public void deleteByUser(User user) {
+
         repo.deleteByUser(user);
     }
-
 }

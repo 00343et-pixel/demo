@@ -1,7 +1,5 @@
 package com.example.demo.practice.service;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import com.example.demo.practice.dto.response.CartResponse;
 import com.example.demo.practice.entity.Cart;
 import com.example.demo.practice.entity.Product;
 import com.example.demo.practice.entity.User;
-import com.example.demo.practice.exception.InvalidQuantityException;
 import com.example.demo.practice.exception.NotEnoughStockException;
 import com.example.demo.practice.exception.NotFoundException;
 import com.example.demo.practice.repository.CartRepository;
@@ -21,6 +18,7 @@ import com.example.demo.practice.repository.ProductRepository;
 import com.example.demo.practice.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +31,14 @@ public class CartService {
     @Transactional
     @Cacheable(value = "cart", key = "'email:' + #email")
     public CartResponse getCartResponse(String email) {
+
         return CartResponse.from(getCart(email));
     }
 
     @Transactional
     @CacheEvict(value = "cart", key = "'email:' + #email")
     public CartResponse addCartItem(String email, CartItemRequest request) {
+
         Cart cart = getCart(email);
         Product product = getProduct(request.productId());
 
@@ -53,6 +53,7 @@ public class CartService {
     @Transactional
     @CacheEvict(value = "cart", key = "'email:' + #email")
     public CartResponse updateCratItem(String email, CartUpdateRequest request, Long id) {
+
         Cart cart = getCart(email);
         Product product = getProduct(id);
         
@@ -65,9 +66,12 @@ public class CartService {
     @Transactional
     @CacheEvict(value = "cart", key = "'email:' + #email")
     public CartResponse deleteCartItem(String email, Long id) {
+
         Cart cart = getCart(email);
         Product product = getProduct(id);
+
         cart.deleteItem(product);
+        
         return CartResponse.from(cart);
     }
 
@@ -87,11 +91,8 @@ public class CartService {
     }
 
     private void checkQuantity(Integer quantity, Product product) {
-        if (quantity <= 0) {
-            throw new InvalidQuantityException();
-        }
         if (product.getIsActive() == false) {
-            throw new RuntimeErrorException(null, "Product is not available now.");
+            throw new RuntimeException("Product is not available now.");
         }
         if (quantity > product.getStock()) {
             throw new NotEnoughStockException();

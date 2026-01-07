@@ -10,6 +10,7 @@ import com.example.demo.practice.repository.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {

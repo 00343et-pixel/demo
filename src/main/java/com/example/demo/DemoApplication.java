@@ -28,5 +28,5 @@ public class DemoApplication {
 	// 直接進入 Redis: docker exec -it redis redis-cli
 	/* 查詢測試:
 		ping 回傳：PONG
-	清空所有 DB: flushall
+		清空所有 DB: flushall
 	 */

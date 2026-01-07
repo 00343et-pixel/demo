@@ -17,11 +17,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)   // 404
+                .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(
                     404,
                     "Not Found",
-                    ex.getMessage() // 回傳錯誤訊息
+                    ex.getMessage()
                 ));
     }
 

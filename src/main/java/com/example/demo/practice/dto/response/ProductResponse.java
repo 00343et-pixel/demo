@@ -1,6 +1,7 @@
 package com.example.demo.practice.dto.response;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.example.demo.practice.entity.Product;
 
@@ -21,7 +22,7 @@ public class ProductResponse implements Serializable {
     Long productId;
 
     @Schema(description = "product name", example = "iPhone17")
-    String name;
+    String productName;
 
     @Schema(description = "category ID", example = "1")
     Long categoryId;
@@ -29,8 +30,8 @@ public class ProductResponse implements Serializable {
     @Schema(description = "description of product", example = "17th iPhone")
     String description;
 
-    @Schema(description = "price", example = "32000")
-    Integer price;
+    @Schema(description = "price", example = "32000.00")
+    BigDecimal price;
 
     @Schema(description = "stock", example = "50")
     Integer stock;

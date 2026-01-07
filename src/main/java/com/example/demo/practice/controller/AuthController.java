@@ -39,24 +39,20 @@ public class AuthController {
         private final AuthService authService;
         
         @Operation(
-                summary = "登入，回傳 JWT",
-                description = "輸入email跟password"
+                summary = "登入",
+                description = "輸入信箱跟密碼"
         )
         @ApiResponses({
                 @ApiResponse(
                         responseCode = "200",
-                        description = "登入成功",
-                        content = @Content(
-                                schema = @Schema(implementation = LoginResponse.class)
-                        )
+                        description = "登入成功"
                 ),
                 @ApiResponse(
                         responseCode = "401",
                         description = "信箱或密碼錯誤",
                         content = @Content(
                                 schema = @Schema(implementation = ErrorResponse.class)
-                        )
-                )
+                ))
         })
         @PostMapping("/login")
         public ResponseEntity<LoginResponse> login(
@@ -66,23 +62,19 @@ public class AuthController {
         }
 
         @Operation(
-                summary = "刷新AT",
-                description = "輸入RT"
+                summary = "刷新Access Token",
+                description = "輸入Refresh Token"
         )
         @ApiResponses({
                 @ApiResponse(responseCode = "200",
-                        description = "refresh成功",
-                        content = @Content(
-                                schema = @Schema(implementation = TokenResponse.class)
-                        )
+                        description = "refresh成功"
                 ),
                 @ApiResponse(
                         responseCode = "401",
-                        description = "RT錯誤",
+                        description = "輸入錯誤",
                         content = @Content(
                                 schema = @Schema(implementation = ErrorResponse.class)
-                        )
-                )
+                ))
         })
         @PostMapping("/refresh")
         public ResponseEntity<TokenResponse> refresh(
@@ -92,10 +84,19 @@ public class AuthController {
         }
 
         @Operation(
-                summary = "登出（加入 blacklist）"
+                summary = "登出"
         )
+        @ApiResponses({
+                @ApiResponse(responseCode = "204", description = "登出成功"),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "輸入錯誤",
+                        content = @Content(
+                                schema = @Schema(implementation = ErrorResponse.class)
+                ))
+        })
         @PostMapping("/logout")
-        public ResponseEntity<String> logout(
+        public ResponseEntity<Void> logout(
                 HttpServletRequest request,
                 Authentication authentication
         ) {
@@ -109,7 +110,18 @@ public class AuthController {
                 summary = "註冊",
                 description = "輸入name、email、phone、address跟password"
         )
-        @PostMapping("/register") // @Valid = 告訴 Spring：「請幫我檢查這個物件上所有的驗證註解，不合法就不要進到方法裡」
+        @ApiResponses({
+                @ApiResponse(responseCode = "201",
+                        description = "註冊成功"
+                ),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "資料錯誤",
+                        content = @Content(
+                                schema = @Schema(implementation = ErrorResponse.class)
+                ))
+        })
+        @PostMapping("/register")
         public ResponseEntity<UserResponse> registerUser(
                 @RequestBody @Valid UserCreateRequest request
         ) {
@@ -118,8 +130,17 @@ public class AuthController {
 
         @Operation(
                 summary = "重設密碼",
-                description = "輸入newPassword"
+                description = "輸入新密碼"
         )
+        @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "密碼重設成功"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "密碼格式錯誤",
+                        content = @Content(
+                                schema = @Schema(implementation = ErrorResponse.class)
+                ))
+        })
         @PutMapping("/me/password")
         public ResponseEntity<String> resetPassword(
                 Authentication authentication,

@@ -33,26 +33,19 @@ public class JwtTokenProvider {
 
         private Key key;
 
-        @PostConstruct // @PostConstruct 一定在 @Value 注入後執行
+        @PostConstruct
         public void init() {
                 this.key = Keys.hmacShaKeyFor(
                         secretKey.getBytes(StandardCharsets.UTF_8)
                 );
-                System.out.println("JWT key initialized");
         }
-        /**
-         * 建立 JWT
-         */
-        public String createAccessToken(String email, Role role) {
-                        return createToken(email, role, expiration);
-                }
 
-        public String createToken(String email, Role role, long ttlMillis) {
+        public String createToken(String email, Role role) {
                 Claims claims = Jwts.claims().setSubject(email);
                 claims.put("role", role.name());
 
                 Date now = new Date();
-                Date expiry = new Date(now.getTime() + ttlMillis);
+                Date expiry = new Date(now.getTime() + expiration);
 
                 return Jwts.builder()
                         .setClaims(claims)
@@ -62,9 +55,6 @@ public class JwtTokenProvider {
                         .compact();
         }
         
-        /**
-         * 驗證 JWT 是否合法
-         */
         public boolean validateToken(String token) {
                 try {
                         parseClaims(token);
@@ -76,9 +66,6 @@ public class JwtTokenProvider {
                 }
         }
 
-        /**
-         * JWT → Authentication
-         */
         public Authentication getAuthentication(String token) {
                 Claims claims = parseClaims(token);
 
@@ -95,14 +82,12 @@ public class JwtTokenProvider {
                 );
         }
 
-        // 🔹 取得剩餘有效時間（給 Redis 黑名單用）
         public long getRemainingTime(String token) {
                 Claims claims = parseClaims(token);
                 return claims.getExpiration().getTime()
                         - System.currentTimeMillis();
         }
 
-        // 解析Token
         private Claims parseClaims(String token) {
                 return Jwts.parserBuilder()
                         .setSigningKey(key)

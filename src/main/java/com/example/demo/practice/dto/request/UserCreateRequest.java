@@ -10,7 +10,7 @@ public record UserCreateRequest(
 
     @NotBlank
     @Schema(description = "user name", example = "GuoHong")
-    String username,
+    String userName,
 
     @NotBlank
     @Size(min = 8, message = "Password must be at least 8 characters")

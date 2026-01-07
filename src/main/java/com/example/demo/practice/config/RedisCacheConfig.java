@@ -24,7 +24,7 @@ public class RedisCacheConfig {
 
         RedisCacheConfiguration defaultConfig =
                 RedisCacheConfiguration.defaultCacheConfig()
-                    .entryTtl(Duration.ofMinutes(10)) // 預設 10 分鐘
+                    .entryTtl(Duration.ofMinutes(10))
                     .disableCachingNullValues()
                     .serializeKeysWith(
                         RedisSerializationContext.SerializationPair
@@ -35,7 +35,6 @@ public class RedisCacheConfig {
 
         Map<String, RedisCacheConfiguration> configs = new HashMap<>();
         
-        // 不同 Cache 不同 TTL
         configs.put("users",
             defaultConfig.entryTtl(Duration.ofMinutes(10)));
 

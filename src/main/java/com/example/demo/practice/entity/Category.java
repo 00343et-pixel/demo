@@ -10,12 +10,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "categories")
 public class Category extends CreatedEntity {
     
@@ -33,7 +34,6 @@ public class Category extends CreatedEntity {
         this.name = name;
     }
 
-    // 與product的雙向關聯
     public void addProduct(Product product) {
         products.add(product);
         product.setCategory(this);

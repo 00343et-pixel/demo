@@ -22,8 +22,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlacklistService tokenBlacklistService;
 
-    // ⭐ 這個 constructor 一定要存在 ⭐
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, TokenBlacklistService tokenBlacklistService) {
+    public JwtAuthenticationFilter(
+        JwtTokenProvider jwtTokenProvider,
+        TokenBlacklistService tokenBlacklistService
+    ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.tokenBlacklistService = tokenBlacklistService;
     }
@@ -36,13 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-
         String token = resolveToken(request);
             
         if (token != null && jwtTokenProvider.validateToken(token)) {
 
             if (tokenBlacklistService.isBlacklisted(token)) {
-                throw new JwtException("Token is revoked");
+                throw new JwtException("Token is revoked.");
             }
 
             Authentication auth =
@@ -52,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .setAuthentication(auth);
         }
 
-        filterChain.doFilter(request, response); //把 request 交給下一個 Filter / Security 處理」
+        filterChain.doFilter(request, response);
 
     }
     

@@ -20,9 +20,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) //JPA 需要無參數建構子，但不應該被外部隨便 new
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "users") //避免H2的保留字
+@Table(name = "users")
 public class User extends AuditableEntity {
     
     @Id
@@ -32,7 +32,7 @@ public class User extends AuditableEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true) //不能null，且唯一
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -54,11 +54,9 @@ public class User extends AuditableEntity {
             orphanRemoval = true)
     private Cart cart;
     
-    // @JsonManagedReference(value = "order-user") //用DTO回傳的話就用不到
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
 
-    // Role預設是USER
     public User(String name, String email, String phone, String address, String password) {
         this.name = name;
         this.email = email;
@@ -75,11 +73,6 @@ public class User extends AuditableEntity {
     public void addOrder(Order order) {
         orders.add(order);
         order.setUser(this);
-    }
-
-    public void removeOrder(Order order) {
-        orders.remove(order);
-        order.setUser(null);
     }
 
     public void changePassword(String encodedPassword) {

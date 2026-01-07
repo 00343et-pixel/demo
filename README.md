@@ -2,7 +2,7 @@
 
 ## 專案介紹
 本專案使用 Spring Boot 開發後端 RESTful API，
-實作完整 CRUD、資料庫操作與 JWT 身分驗證機制。
+提供使用者認證、商品管理與訂單功能。
 
 ## 技術棧
 - Java 21
@@ -13,6 +13,7 @@
 - JWT
 - MySQL
 - Swagger (OpenAPI)
+- Maven
 
 ## 架構設計
 - Controller：處理 HTTP Request

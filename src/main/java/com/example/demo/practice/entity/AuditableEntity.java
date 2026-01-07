@@ -11,14 +11,14 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
-@MappedSuperclass // 不會產生表，只是被繼承
-@EntityListeners(AuditingEntityListener.class) // 啟用自動時間填充
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 public abstract class AuditableEntity {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant createdAt; // Instant（最佳時區實務）
+    private Instant createdAt;
 
     @LastModifiedDate
     @Column(nullable = false)

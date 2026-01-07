@@ -35,7 +35,7 @@ public class AuthService {
                 ))
                 .orElseThrow(UnauthorizedException::new);
 
-        String accessToken = jwtTokenProvider.createAccessToken(
+        String accessToken = jwtTokenProvider.createToken(
                 user.getEmail(), user.getRole()
         );
 
@@ -43,12 +43,11 @@ public class AuthService {
         return new LoginResponse(accessToken, refreshToken.getToken());
     }
 
-    // 之後補 rotation
     public TokenResponse refresh(RefreshRequest request) {
         User user = refreshTokenService.verify(request.refreshToken());
 
         String newAccessToken =
-                jwtTokenProvider.createAccessToken(
+                jwtTokenProvider.createToken(
                         user.getEmail(), user.getRole()
                 );
         return new TokenResponse(newAccessToken);
@@ -69,7 +68,6 @@ public class AuthService {
                 .ifPresent(refreshTokenService::deleteByUser);
     }
 
-    // 把request轉成token
     private String resolveToken(HttpServletRequest request) {
         String bearer = request.getHeader("Authorization");
         return bearer != null && bearer.startsWith("Bearer ")

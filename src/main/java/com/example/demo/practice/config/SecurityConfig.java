@@ -1,4 +1,5 @@
 package com.example.demo.practice.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -33,10 +34,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // 關閉 CSRF（API 專用）
+
             .csrf(csrf -> csrf.disable())
 
-            // 不使用 Session
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
@@ -46,10 +46,8 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
             )
 
-            // 權限規則
             .authorizeHttpRequests(auth -> auth
 
-                // 放行登入
                 .requestMatchers(
                     "/auth/login",
                     "/auth/refresh",
@@ -60,23 +58,21 @@ public class SecurityConfig {
                     "/swagger-ui.html"
                 ).permitAll()
 
-                // 需要登入
                 .requestMatchers(
                     "/auth/logout",
                     "/auth/me/password",
                     "/users/**"
                 ).authenticated()
 
-                // ADMIN 專用
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers(
+                    "/admin/**"
+                ).hasRole("ADMIN")
 
-                // USER 、 ADMIN 、 SUPPORT
                 .requestMatchers(
                     "/cart/**",
                     "/orders/**"
                 ).hasAnyRole("USER", "ADMIN")
 
-                // 其他都要登入
                 .anyRequest().authenticated()
             )
             
@@ -84,7 +80,6 @@ public class SecurityConfig {
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
             );
-
 
         return http.build();
     }
