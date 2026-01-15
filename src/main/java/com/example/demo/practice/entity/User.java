@@ -64,10 +64,15 @@ public class User extends AuditableEntity {
         this.address = address;
         this.password = password;
         this.role = Role.USER;
+        this.touch();
     }
 
     public void setCart(Cart cart) {
-            this.cart = cart;
+        this.cart = cart;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void addOrder(Order order) {

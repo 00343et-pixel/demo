@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ import com.example.demo.practice.dto.response.UserResponse;
 import com.example.demo.practice.service.AuthService;
 import com.example.demo.practice.service.UserService;
 
-
+@Slf4j
 @Tag(name = "Auth", description = "登入與註冊相關 API")
 @SecurityRequirement(name = "BearerAuth")
 @RestController
@@ -58,6 +59,7 @@ public class AuthController {
         public ResponseEntity<LoginResponse> login(
                 @RequestBody @Valid LoginRequest request
         ) {
+                log.info("user login, email={}", request.email());
                 return ResponseEntity.ok(authService.login(request));
         }
 
@@ -80,6 +82,7 @@ public class AuthController {
         public ResponseEntity<TokenResponse> refresh(
                 @RequestBody @Valid RefreshRequest request
         ) {
+                log.info("refresh token request");
                 return ResponseEntity.ok(authService.refresh(request));
         }
 
@@ -100,9 +103,9 @@ public class AuthController {
                 HttpServletRequest request,
                 Authentication authentication
         ) {
-
-                authService.logout(request, authentication);
-
+                String email = authentication.getName();
+                log.info("user logout, email={}", email);
+                authService.logout(request, email);
                 return ResponseEntity.noContent().build();
         }
 
@@ -125,6 +128,7 @@ public class AuthController {
         public ResponseEntity<UserResponse> registerUser(
                 @RequestBody @Valid UserCreateRequest request
         ) {
+                log.info("create user, email={}", request.email());
                 return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
         }
 
@@ -146,10 +150,9 @@ public class AuthController {
                 Authentication authentication,
                 @RequestBody @Valid ResetPasswordRequest request
         ) {
-                userService.resetPassword(
-                        authentication.getName(),
-                        request.newPassword()
-                );
+                String email = authentication.getName();
+                log.info("user reset password, email={}", email);
+                userService.resetPassword(email, request.newPassword());
                 return ResponseEntity.ok("密碼更新成功!");
         }
 }

@@ -11,44 +11,32 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.demo.practice.dto.response.ErrorResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex) {
+
+        log.warn("not found: {}", ex.getMessage());
+
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(
                     404,
-                    "Not Found",
-                    ex.getMessage()
-                ));
-    }
-
-    @ExceptionHandler(NotEnoughStockException.class)
-    public ResponseEntity<ErrorResponse> handleNotEnoughStock(NotEnoughStockException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(
-                    400,
-                    "BAD REQUEST",
-                    ex.getMessage()
-                ));
-    }
-
-    @ExceptionHandler(InvalidQuantityException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidQuantity(InvalidQuantityException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(
-                    400,
-                    "BAD REQUEST",
+                    "Not_Found",
                     ex.getMessage()
                 ));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex) {
+
+        log.warn("unauthorized: {}", ex.getMessage());
+
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(
@@ -60,6 +48,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<ErrorResponse> handleToken(TokenException ex) {
+
+        log.warn("unauthorized: {}", ex.getMessage());
+
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(
@@ -71,6 +62,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntime(RuntimeException ex) {
+
+        log.warn("bad request: {}", ex.getMessage());
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
                         400,
@@ -81,13 +75,31 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+
+        String msg = Optional.ofNullable(ex.getBindingResult().getFieldError())
+                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                                .orElse("Validation failed");
+
+        log.warn("bad request: {}", "Validation failed");
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
                         400,
                         "BAD_REQUEST",
-                        Optional.ofNullable(ex.getBindingResult().getFieldError())
-                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                                .orElse("Validation failed")
+                        msg
+                ));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+
+        log.error("unexpected error", ex);
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(
+                        500,
+                        "Internal_Error",
+                        "系統錯誤"
                 ));
     }
 }

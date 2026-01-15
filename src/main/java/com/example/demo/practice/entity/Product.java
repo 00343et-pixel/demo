@@ -64,7 +64,7 @@ public class Product extends AuditableEntity {
         this.description = description;
         this.price = price.setScale(2, RoundingMode.HALF_UP);
         this.stock = stock;
-        this.isActive = false;
+        this.isActive = true;
     }
 
     public void setCategory(Category category) {
@@ -83,6 +83,10 @@ public class Product extends AuditableEntity {
         if (price != null) { this.price = price.setScale(2, RoundingMode.HALF_UP); }
         if (stock != null) { this.stock = stock; }
         if (isActive != null) { this.isActive = isActive; }
+    }
+
+    public void delete() {
+        this.isActive = false;
     }
 
     public void increaseStock(int quantity) {

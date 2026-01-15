@@ -27,8 +27,4 @@ public abstract class AuditableEntity {
     protected void touch() {
         this.updatedAt = Instant.now();
     }
-    /* 改成台灣時區
-        ZonedDateTime updatedAt
-        updatedAt = user.getUpdatedAt().atZone(ZoneId.of("Asia/Taipei"))
-    */
 }

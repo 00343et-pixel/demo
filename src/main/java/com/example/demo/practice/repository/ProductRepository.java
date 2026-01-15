@@ -19,10 +19,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             p.category.id,
             p.description,
             p.price,
-            p.stock,
-            p.isActive
+            p.stock
         )
         FROM Product p
+        WHERE p.isActive = true
     """)
     Page<ProductResponse> findProducts(Pageable pageable);
 
@@ -33,12 +33,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             p.category.id,
             p.description,
             p.price,
-            p.stock,
-            p.isActive
+            p.stock
         )
         FROM Product p 
-        WHERE p.name 
+        WHERE p.name
         LIKE %:keyword%
+        AND p.isActive = true
     """)
     Page<ProductResponse> search(@Param("keyword") String keyword, Pageable pageable);
 }

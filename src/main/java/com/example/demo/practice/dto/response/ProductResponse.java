@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "product imformation")
 public class ProductResponse implements Serializable {
-    
-    private static final long serialVersionUID = 1L; //序列化版本號
 
     @Schema(description = "product ID", example = "1")
     Long productId;
@@ -36,9 +34,6 @@ public class ProductResponse implements Serializable {
     @Schema(description = "stock", example = "50")
     Integer stock;
 
-    @Schema(description = "available", example = "ture")
-    Boolean isActive;
-
     public static ProductResponse from(Product product) {
         return new ProductResponse(
             product.getId(),
@@ -46,8 +41,7 @@ public class ProductResponse implements Serializable {
             product.getCategory().getId(),
             product.getDescription(),
             product.getPrice(),
-            product.getStock(),
-            product.getIsActive()
+            product.getStock()
         );
     }
 }

@@ -77,12 +77,12 @@ public class CartService {
 
     private Product getProduct(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("product not exists"));
+                .orElseThrow(() -> new NotFoundException("Product not exists."));
     }
 
     private Cart getCart(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("user not exists"));
+                .orElseThrow(() -> new NotFoundException("User not exists."));
         if (user.getCart() == null) {
             Cart cart = new Cart(user);
             cartRepository.save(cart);
@@ -92,7 +92,7 @@ public class CartService {
 
     private void checkQuantity(Integer quantity, Product product) {
         if (product.getIsActive() == false) {
-            throw new RuntimeException("Product is not available now.");
+            throw new NotFoundException("Product not exists.");
         }
         if (quantity > product.getStock()) {
             throw new NotEnoughStockException();

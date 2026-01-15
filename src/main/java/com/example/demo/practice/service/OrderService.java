@@ -1,11 +1,8 @@
 package com.example.demo.practice.service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.management.RuntimeErrorException;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.practice.dto.request.OrderStatusRequest;
 import com.example.demo.practice.dto.response.OrderResponse;
 import com.example.demo.practice.dto.response.PageResponse;
 import com.example.demo.practice.entity.Cart;
@@ -25,8 +21,10 @@ import com.example.demo.practice.entity.OrderItem;
 import com.example.demo.practice.entity.OrderStatus;
 import com.example.demo.practice.entity.Product;
 import com.example.demo.practice.entity.User;
+import com.example.demo.practice.exception.EmptyCartException;
 import com.example.demo.practice.exception.NotEnoughStockException;
 import com.example.demo.practice.exception.NotFoundException;
+import com.example.demo.practice.exception.OrderShippedException;
 import com.example.demo.practice.repository.OrderRepository;
 import com.example.demo.practice.repository.UserRepository;
 
@@ -74,10 +72,9 @@ public class OrderService {
         @CacheEvict(value = "orderPage", allEntries = true),
         @CacheEvict(value = "order", allEntries = true)
     })
-    public OrderResponse updateOrderStatus(Long id, OrderStatusRequest request) {
+    public OrderResponse updateOrderStatus(Long id, OrderStatus status) {
 
         Order order = getOrder(id);
-        OrderStatus status = request.orderStatus();
 
         order.setStatus(status);
 
@@ -106,7 +103,7 @@ public class OrderService {
         OrderStatus status = order.getStatus();
 
         if (status == OrderStatus.SHIPPED) {
-            throw new RuntimeException("order is shipped, cannot be canceled");
+            throw new OrderShippedException();
         }
 
         order.setStatus(OrderStatus.CANCELED);
@@ -126,7 +123,7 @@ public class OrderService {
         User user = getUser(email);
         Cart cart = user.getCart();
 
-        if (cart.getItems().isEmpty()) { throw new RuntimeErrorException(null, "cart is empty"); }
+        if (cart == null || cart.getItems().isEmpty()) { throw new EmptyCartException(); }
 
         Order order = new Order();
 
@@ -135,14 +132,13 @@ public class OrderService {
             Integer quantity = item.getQuantity();
             
             if (product.getIsActive() == false) {
-                throw new RuntimeErrorException(null, "product is not available now");
+                throw new NotFoundException("Product not exists.");
             }
             if (quantity > product.getStock()) {
                 throw new NotEnoughStockException();
             }
 
-            BigDecimal price = product.getPrice().multiply(BigDecimal.valueOf(quantity));
-            OrderItem orderItem = new OrderItem(product, quantity, price);
+            OrderItem orderItem = new OrderItem(product, quantity);
             order.addItem(orderItem);
             product.decreaseStock(quantity);
         }
@@ -157,21 +153,22 @@ public class OrderService {
     private User getUser(String email) {
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("user not exists"));
+                .orElseThrow(() -> new NotFoundException("User not exists."));
     }
 
     private Order getOrder(String email, Long id) {
 
-        Order order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("order not exists"));
-        if (order.getUser() != getUser(email)){
-            throw new NotFoundException("order not exists");
+        Order order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order not exists."));
+        User user = getUser(email);
+        if (!order.getUser().getId().equals(user.getId())){
+            throw new NotFoundException("Order not exists.");
         }
         return order;
     }
 
     private Order getOrder(Long id) {
 
-        return orderRepository.findById(id).orElseThrow(() -> new NotFoundException("order not exists"));
+        return orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order not exists."));
     }
 
     private void restoreStock(Order order) {

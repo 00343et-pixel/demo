@@ -1,6 +1,5 @@
 package com.example.demo.practice.service;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +52,7 @@ public class AuthService {
         return new TokenResponse(newAccessToken);
     }
 
-    public void logout(HttpServletRequest request, Authentication authentication) {
+    public void logout(HttpServletRequest request, String email) {
         String token = resolveToken(request);
 
         if (token == null) {
@@ -64,7 +63,7 @@ public class AuthService {
 
         tokenBlacklistService.blacklist(token, ttl);
 
-        userRepository.findByEmail(authentication.getName())
+        userRepository.findByEmail(email)
                 .ifPresent(refreshTokenService::deleteByUser);
     }
 

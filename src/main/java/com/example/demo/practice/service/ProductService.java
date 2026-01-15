@@ -44,9 +44,13 @@ public class ProductService {
     }
 
     @Cacheable(value = "products", key = "#id")
-    
     public ProductResponse findById(Long id) {
-        return ProductResponse.from(getProduct(id));
+        
+        Product product = getProduct(id);
+        if (!product.getIsActive()) {
+            throw new NotFoundException("Product not exists.");
+        }
+        return ProductResponse.from(product);
     }
 
     @Transactional
@@ -81,11 +85,7 @@ public class ProductService {
     })
     public void deleteProduct(Long id) {
 
-        Product product = getProduct(id);
-
-        Category category = product.getCategory();
-
-        category.removeProduct(product);
+        getProduct(id).delete();
     }
 
     @Cacheable(
@@ -126,12 +126,13 @@ public class ProductService {
     }
 
     private Product getProduct(Long id) {
+        
         return productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("product not exists"));
+                .orElseThrow(() -> new NotFoundException("Product not exists."));
     }
     
     private Category getCategory(Long id) {
         return categoryRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("category not exists"));
+                    .orElseThrow(() -> new NotFoundException("Category not exists."));
     }
 }

@@ -35,12 +35,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
+@Slf4j
 @Tag(name = "Admin", description = "管理員相關 API")
 @SecurityRequirement(name = "BearerAuth")
 @RequiredArgsConstructor
@@ -80,6 +81,7 @@ public class AdminController {
     public ResponseEntity<CategoryResponse> createCategory(
         @RequestBody @Valid CategoryCreateRequest request
     ) {
+        log.info("create category, name={}", request.categoryName());
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(request));
     }
 
@@ -117,6 +119,7 @@ public class AdminController {
     public ResponseEntity<ProductResponse> createProduct(
         @RequestBody @Valid ProductCreateRequest request
     ) {
+        log.info("create product, name={}", request.productName());
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(request));
     }
     
@@ -155,6 +158,7 @@ public class AdminController {
         @RequestBody ProductUpdateRequest request,
         @PathVariable Long id
     ) {
+        log.info("update product, id={}", id);
         return ResponseEntity.ok(productService.updateProduct(id, request));
     }
 
@@ -186,6 +190,7 @@ public class AdminController {
     public ResponseEntity<Void> deleteProduct(
         @PathVariable Long id
     ) {
+        log.info("delete product, id={}", id);
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
@@ -262,6 +267,7 @@ public class AdminController {
         @PathVariable Long id,
         @RequestBody @Valid OrderStatusRequest request
     ) {
-        return ResponseEntity.ok(orderService.updateOrderStatus(id, request));
+        log.info("update order status, id={}", id);
+        return ResponseEntity.ok(orderService.updateOrderStatus(id, request.orderStatus()));
     }
 }

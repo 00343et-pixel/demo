@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.practice.exception.OrderCanceledException;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,9 +65,10 @@ public class Order extends AuditableEntity {
     public void setStatus(OrderStatus status) {
 
         if (this.status == OrderStatus.CANCELED){
-            throw new RuntimeException("order is already canceled");
+            throw new OrderCanceledException();
         }
-
-        this.status = status;
+        if (status != this.status) {
+            this.status = status;
+        }
     }
 }

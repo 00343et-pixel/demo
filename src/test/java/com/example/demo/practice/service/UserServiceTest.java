@@ -23,6 +23,7 @@ import com.example.demo.practice.exception.NotFoundException;
 import com.example.demo.practice.exception.SamePasswordException;
 import com.example.demo.practice.repository.UserRepository;
 
+
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
     
@@ -39,7 +40,7 @@ public class UserServiceTest {
     void getProfileByEmail_userExists_shouldReturnProfile() {
         
         User user = new User(
-            "KH",
+            "GH",
             "test@test.com",
             "0912345678",
             "Taipei",
@@ -52,7 +53,7 @@ public class UserServiceTest {
         UserResponse response =
             userService.getProfileByEmail("test@test.com");
 
-        assertEquals("KH", response.userName());
+        assertEquals("GH", response.userName());
         assertEquals("test@test.com", response.email());
     }
 
@@ -72,7 +73,7 @@ public class UserServiceTest {
     void createUser_shouldEncodePasswordAndSaveUser() {
         
         UserCreateRequest request = new UserCreateRequest(
-            "KH",
+            "GH",
             "rawPwd",
             "test@test.com",
             "0912345678",
@@ -94,7 +95,7 @@ public class UserServiceTest {
     void resetPassword_samePassword_shouldThrowException() {
 
         User user = new User(
-            "KH",
+            "GH",
             "test@test.com",
             "0912345678",
             "Taipei",
@@ -117,7 +118,7 @@ public class UserServiceTest {
     void resetPassword_differentPassword_shouldUpdatePassword() {
 
         User user = new User(
-            "KH",
+            "GH",
             "test@test.com",
             "0912345678",
             "Taipei",
@@ -142,7 +143,7 @@ public class UserServiceTest {
     void updateData_shouldUpdateUserFields() {
 
         User user = new User(
-            "KH",
+            "GH",
             "test@test.com",
             "0912345678",
             "Taipei",

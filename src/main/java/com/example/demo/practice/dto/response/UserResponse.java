@@ -1,5 +1,7 @@
 package com.example.demo.practice.dto.response;
 
+import java.time.ZoneId;
+
 import com.example.demo.practice.entity.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +22,10 @@ public record UserResponse(
     String phone,
 
     @Schema(description = "address", example = "Taichung")
-    String address
+    String address,
+
+    @Schema(description = "updated at", example = "2026-01-09T11:26:18.426728+08:00[Asia/Taipei]")
+    String updatedAt
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -28,7 +33,8 @@ public record UserResponse(
             user.getName(),
             user.getEmail(),
             user.getPhone(),
-            user.getAddress()
+            user.getAddress(),
+            user.getUpdatedAt().atZone(ZoneId.of("Asia/Taipei")).toString()
         );
     }
 }

@@ -16,8 +16,9 @@ import com.example.demo.practice.exception.SamePasswordException;
 import com.example.demo.practice.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -66,17 +67,28 @@ public class UserService {
 
         User user = getUser(email);
 
+        log.debug("start updating user, email={}", email);
+
         user.updateData(
             updateRequest.userName(),
             updateRequest.phone(),
             updateRequest.address()
         );
 
+        log.debug("finish updating user, email={}, success=true", email);
+
         return UserResponse.from(user);
     }
 
     private User getUser(String email) {
-        return userRepository.findByEmail(email)
+        
+        log.debug("start searching user, email={}", email);
+
+        User user =  userRepository.findByEmail(email)
             .orElseThrow(() -> new NotFoundException("user not exists"));
+            
+        log.debug("finish searching user, email={}, found={}", 
+                  email, user != null);
+        return user;
     }
 }

@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
+@Slf4j
 @Tag(name = "User", description = "使用者相關 API")
 @SecurityRequirement(name = "BearerAuth")
 @RestController
@@ -50,7 +51,9 @@ public class UserController {
     public ResponseEntity<UserResponse> getMe(
         Authentication authentication
     ) {
-        return ResponseEntity.ok(userService.getProfileByEmail(authentication.getName()));
+        String email = authentication.getName();
+        log.info("search user, email={}", email);
+        return ResponseEntity.ok(userService.getProfileByEmail(email));
     }
 
     @Operation(
@@ -71,7 +74,8 @@ public class UserController {
         Authentication authentication,
         @RequestBody @Valid UserUpdateRequest updateRequest
     ) {
-        return ResponseEntity.ok(userService.updateData(authentication.getName(), updateRequest));
+        String email = authentication.getName();
+        log.info("update user data, email={}", email);
+        return ResponseEntity.ok(userService.updateData(email, updateRequest));
     }
-
 }

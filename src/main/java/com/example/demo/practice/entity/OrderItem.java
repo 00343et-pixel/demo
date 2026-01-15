@@ -43,10 +43,10 @@ public class OrderItem {
     )
     private BigDecimal price;
 
-    public OrderItem(Product product, Integer quantity, BigDecimal price) {
+    public OrderItem(Product product, Integer quantity) {
         this.product = product;
         this.quantity = quantity;
-        this.price = price;
+        this.price = product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public void setOrder(Order order) {
