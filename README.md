@@ -24,7 +24,7 @@
 
 ## 專案架構
 專案採用典型分層架構，並依職責切分 package，提升可維護性與可讀性。
-
+```text
 com.example.demo
 ├─ controller
 ├─ service
@@ -37,7 +37,7 @@ com.example.demo
 │ └─ response
 ├─ config
 └─ exception
-
+```
 ### 架構說明
 - **Controller**：處理 HTTP Request / Response
 - **Service**：商業邏輯與交易管理
