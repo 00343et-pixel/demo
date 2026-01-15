@@ -106,6 +106,14 @@ Request
 
 ---
 
+## 測試設計說明
+
+- 單元測試：JUnit 5 + Mockito
+- Web 層測試：@WebMvcTest + MockMvc
+- Security 測試：@WithMockUser + JWT Filter Mock
+
+---
+
 ## API 文件
 啟動專案後可透過 Swagger 查看 API 文件：
 

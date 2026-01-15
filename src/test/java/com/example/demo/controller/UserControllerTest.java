@@ -56,6 +56,13 @@ class UserControllerTest {
     }
 
     @Test
+    void getMe_unauthenticated_shouldReturn401() throws Exception {
+        
+        mockMvc.perform(get("/users/me"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @WithMockUser(username = "test@test.com")
     void getMe_authenticated_shouldReturnProfile() throws Exception {
         

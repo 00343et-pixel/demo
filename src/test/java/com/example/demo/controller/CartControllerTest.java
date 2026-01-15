@@ -72,6 +72,13 @@ public class CartControllerTest {
     }
 
     @Test
+    void getCart_unauthenticated_shouldReturn401() throws Exception {
+        
+        mockMvc.perform(get("/cart"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @WithMockUser(username = "test@test.com")
     void getCart_authenticated_shouldReturnCartResponse() throws Exception {
 
