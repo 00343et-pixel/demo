@@ -43,7 +43,9 @@ http://localhost:8080/swagger-ui.html
 spring.datasource.url=jdbc:mysql://localhost:3306/your_db
 spring.datasource.username=your_username
 spring.datasource.password=your_password
+```
 
 ### 2. 啟動專案
 ```bash
 ./mvnw spring-boot:run
+```
