@@ -1,0 +1,121 @@
+package com.example.demo.entity;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import com.example.demo.exception.InvalidQuantityException;
+import com.example.demo.exception.NotEnoughStockException;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "products")
+public class Product extends AuditableEntity {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(nullable = false)
+    private String description;
+
+    @DecimalMin(value = "0.00", inclusive = true)
+    @Column(
+        precision = 10,
+        scale = 2,
+        nullable = false
+    )
+    private BigDecimal price;
+
+    @Column(nullable = false)
+    private Integer stock;
+
+    @Column(nullable = false)
+    private Boolean isActive;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    public Product(
+        String name,
+        String description,
+        BigDecimal price,
+        Integer stock
+    ) {
+        this.name = name;
+        this.description = description;
+        this.price = price.setScale(2, RoundingMode.HALF_UP);
+        this.stock = stock;
+        this.isActive = true;
+    }
+
+    public void setCategory(Category category) {
+            this.category = category;
+    }
+
+    public void updateProduct(
+        String name,
+        String description,
+        BigDecimal price,
+        Integer stock,
+        Boolean isActive
+    ) {
+        if (name != null) { this.name = name; }
+        if (description != null) { this.description = description; }
+        if (price != null) { this.price = price.setScale(2, RoundingMode.HALF_UP); }
+        if (stock != null) { this.stock = stock; }
+        if (isActive != null) { this.isActive = isActive; }
+    }
+
+    public void delete() {
+        this.isActive = false;
+    }
+
+    public void increaseStock(int quantity) {
+        if (quantity <= 0) {
+            throw new InvalidQuantityException();
+        }
+        this.stock += quantity;
+    }
+
+    public void decreaseStock(int quantity) {
+        if (quantity <= 0) {
+            throw new InvalidQuantityException();
+        }
+        if (quantity > this.stock) {
+            throw new NotEnoughStockException();
+        }
+        this.stock -= quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+        Product other = (Product) o;
+        return id != null && id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}
