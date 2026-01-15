@@ -123,7 +123,7 @@ spring.datasource.password=xxx
 
 jwt.secret=your_jwt_secret
 jwt.expiration=your_expiration_time
-啟動專案
-bash
-複製程式碼
+```
+### 啟動專案
+```bash
 ./mvnw spring-boot:run
