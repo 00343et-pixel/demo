@@ -76,12 +76,14 @@ com.example.demo
 - 實作 Token 黑名單機制，支援登出功能
 
 ### JWT 驗證流程
+```text
 Request
 → JwtAuthenticationFilter
 → Token 驗證 / 黑名單檢查
 → 建立 Authentication
 → SecurityContext
 → Controller
+```
 
 ---
 
