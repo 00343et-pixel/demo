@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(
                         500,
                         "Internal_Error",
-                        "系統錯誤"
+                        "system error"
                 ));
     }
 }
